@@ -1,4 +1,4 @@
-package humane
+package human_readable
 
 import (
 	"testing"
