@@ -1,10 +1,27 @@
 package ethabi
 
 import (
+	"encoding/json"
+	"errors"
+	"fmt"
 	"strings"
 
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/jurshsmith/ethabi-go/utils"
 )
+
+func ParseABI(humanReadableAbi *string) (abi.ABI, error) {
+	if strings.HasPrefix(*humanReadableAbi, string(Event)) == true {
+		eventAbi := New(humanReadableAbi, Event)
+		eventAbiJson, _ := json.Marshal(&eventAbi)
+		eventAbiJsonString := fmt.Sprintf("[%s]", string(eventAbiJson))
+		abiReader := strings.NewReader(eventAbiJsonString)
+
+		return abi.JSON(abiReader)
+	}
+
+	return abi.ABI{}, errors.New("HumanReadable ABI is either unsupported or unvalid")
+}
 
 type Abi struct {
 	Type      string     `json:"type"`

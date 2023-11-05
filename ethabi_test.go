@@ -1,4 +1,4 @@
-package human_readable
+package ethabi
 
 import (
 	"testing"
@@ -8,6 +8,6 @@ import (
 
 func TestParsingEventAbi(t *testing.T) {
 	humanReadableAbi := "event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)"
-	abi, _ := parseABI(&humanReadableAbi)
+	abi, _ := ParseABI(&humanReadableAbi)
 	assert.Equal(t, abi.Events["Transfer"].Sig, "Transfer(address,address,uint256)")
 }
