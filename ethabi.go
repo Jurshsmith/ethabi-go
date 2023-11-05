@@ -20,7 +20,7 @@ func ParseABI(humanReadableAbi *string) (abi.ABI, error) {
 		return abi.JSON(abiReader)
 	}
 
-	return abi.ABI{}, errors.New("HumanReadable ABI is either unsupported or unvalid")
+	return abi.ABI{}, errors.New("HumanReadableABI is either invalid or unsupported")
 }
 
 type Abi struct {
