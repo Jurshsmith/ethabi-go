@@ -1,0 +1,82 @@
+package ethabi
+
+import (
+	"strings"
+
+	"github.com/jurshsmith/ethabi-go/utils"
+)
+
+type Abi struct {
+	Type      string     `json:"type"`
+	Name      string     `json:"name"`
+	Inputs    []AbiInput `json:"inputs"`
+	Anonymous bool       `json:"anonymous"`
+}
+
+type AbiType string
+
+const (
+	Event = "event"
+)
+
+func New(humanReadableAbi *string, Type AbiType) Abi {
+	name := getName(humanReadableAbi)
+	inputs := NewAbiInputs(humanReadableAbi)
+
+	return Abi{Type: string(Type), Name: name, Inputs: inputs, Anonymous: false}
+}
+
+func getName(humanReadableAbi *string) string {
+	abiTokens := strings.Split(*humanReadableAbi, "(")
+	abiTokens = strings.Split(abiTokens[0], " ")
+
+	return abiTokens[1]
+}
+
+type AbiInput struct {
+	Type         string `json:"type"`
+	InternalType string `json:"internalType"`
+	Name         string `json:"name"`
+	Indexed      bool   `json:"indexed"`
+}
+
+func NewAbiInputs(humanReadableAbi *string) []AbiInput {
+	inputTokens := getInputTokens(humanReadableAbi)
+
+	return utils.MapOverSlice(inputTokens, NewAbiInput)
+}
+
+func getInputTokens(humanReadableAbi *string) []string {
+	abi := removeInputTokensBeforePart(humanReadableAbi)
+	abi = removeInputTokensAfterPart(&abi)
+
+	return strings.Split(abi, ",")
+}
+
+func removeInputTokensBeforePart(humanReadableAbi *string) string {
+	abiTokens := strings.Split(*humanReadableAbi, "(")
+	return abiTokens[1]
+}
+
+func removeInputTokensAfterPart(humanReadableAbi *string) string {
+	abiTokens := strings.Split(*humanReadableAbi, ")")
+	return abiTokens[0]
+}
+
+func NewAbiInput(inputToken *string) AbiInput {
+	sanitizedInputToken := strings.TrimSpace(*inputToken)
+	inputTokenParts := strings.Split(sanitizedInputToken, " ")
+
+	theType := inputTokenParts[0]
+	name, indexed := getNameAndIndexStatus(&inputTokenParts)
+
+	return AbiInput{Type: theType, InternalType: theType, Name: name, Indexed: indexed}
+}
+
+func getNameAndIndexStatus(inputTokenParts *[]string) (string, bool) {
+	if len(*inputTokenParts) == 3 {
+		return (*inputTokenParts)[2], true
+	} else {
+		return (*inputTokenParts)[1], false
+	}
+}
