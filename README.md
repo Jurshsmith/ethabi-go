@@ -1,6 +1,6 @@
 ## ETHABI-go
 
-Compliments the go-ethereum ABI's API by exposing a parser that parses human readable ABIs
+Complements go-ethereum ABI's API by exposing a parser for human readable ABIs
 
 ### Install
 
