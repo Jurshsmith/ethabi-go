@@ -23,6 +23,13 @@ func ParseABI(humanReadableAbi *string) (abi.ABI, error) {
 	return abi.ABI{}, errors.New("HumanReadableABI is either invalid or unsupported")
 }
 
+func GetABIName(humanReadableAbi *string) string {
+	abiTokens := strings.Split(*humanReadableAbi, "(")
+	abiTokens = strings.Split(abiTokens[0], " ")
+
+	return abiTokens[1]
+}
+
 type Abi struct {
 	Type      string     `json:"type"`
 	Name      string     `json:"name"`
@@ -37,17 +44,10 @@ const (
 )
 
 func New(humanReadableAbi *string, Type AbiType) Abi {
-	name := getName(humanReadableAbi)
+	name := GetABIName(humanReadableAbi)
 	inputs := NewAbiInputs(humanReadableAbi)
 
 	return Abi{Type: string(Type), Name: name, Inputs: inputs, Anonymous: false}
-}
-
-func getName(humanReadableAbi *string) string {
-	abiTokens := strings.Split(*humanReadableAbi, "(")
-	abiTokens = strings.Split(abiTokens[0], " ")
-
-	return abiTokens[1]
 }
 
 type AbiInput struct {
