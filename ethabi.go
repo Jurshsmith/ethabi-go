@@ -40,7 +40,7 @@ type Abi struct {
 type AbiType string
 
 const (
-	Event = "event"
+	Event = AbiType("event")
 )
 
 func New(humanReadableAbi *string, Type AbiType) Abi {
