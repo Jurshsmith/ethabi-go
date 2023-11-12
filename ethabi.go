@@ -85,9 +85,19 @@ func NewAbiInput(inputToken *string) AbiInput {
 	inputTokenParts := strings.Split(sanitizedInputToken, " ")
 
 	theType := inputTokenParts[0]
+	theType = maybeNormalizeType(&theType)
+
 	name, indexed := getNameAndIndexStatus(&inputTokenParts)
 
 	return AbiInput{Type: theType, InternalType: theType, Name: name, Indexed: indexed}
+}
+
+func maybeNormalizeType(theType *string) string {
+	if *theType == "uint" {
+		return "uint256"
+	}
+
+	return *theType
 }
 
 func getNameAndIndexStatus(inputTokenParts *[]string) (string, bool) {
